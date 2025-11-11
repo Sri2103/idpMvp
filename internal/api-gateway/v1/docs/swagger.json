@@ -13,5 +13,16 @@
         "version": "1.0"
     },
     "basePath": "/api/v1",
-    "paths": {}
+    "paths": {
+        "/healthz": {
+            "get": {
+                "summary": "health of the server handler",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
 }

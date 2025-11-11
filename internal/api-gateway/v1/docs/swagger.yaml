@@ -8,5 +8,11 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: IDP API Gateway
   version: "1.0"
-paths: {}
+paths:
+  /healthz:
+    get:
+      responses:
+        "200":
+          description: OK
+      summary: health of the server handler
 swagger: "2.0"
