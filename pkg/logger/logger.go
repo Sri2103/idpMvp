@@ -4,9 +4,10 @@ import "go.uber.org/zap"
 
 var log *zap.SugaredLogger
 
-func Init(service string) {
+func Init(service string) *zap.SugaredLogger {
 	logger, _ := zap.NewProduction()
 	log = logger.Sugar().With("service", service)
+	return log
 }
 
 func Info(args ...interface{})  { log.Info(args...) }

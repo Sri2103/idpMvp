@@ -1,0 +1,12 @@
+basePath: /api/v1
+info:
+  contact:
+    email: platform-team@myorg.io
+    name: plateform-team
+  description: Entry point for all the clients and cli
+  license:
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: IDP API Gateway
+  version: "1.0"
+paths: {}
+swagger: "2.0"

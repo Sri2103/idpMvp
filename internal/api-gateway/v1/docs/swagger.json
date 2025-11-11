@@ -1,0 +1,17 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Entry point for all the clients and cli",
+        "title": "IDP API Gateway",
+        "contact": {
+            "name": "plateform-team",
+            "email": "platform-team@myorg.io"
+        },
+        "license": {
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {}
+}
