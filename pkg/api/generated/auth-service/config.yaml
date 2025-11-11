@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
-package: api
+package: apiAuth
 generate:
   # NOTE another server must be added!
   gorilla-server: true
-  strict-server: true
+
   models: true
   client: true
-output: gen.go
+output: "./pkg/api/generated/auth-service/gen.go"
 output-options:
   name-normalizer: ToCamelCase
   skip-prune: true

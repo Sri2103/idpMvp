@@ -2,7 +2,7 @@ function Set-ApiAuthMultDir {
     param(
         [string]$main = "main.go",
         [string]$dirs = "./cmd/auth-service,./internal/auth-service/v1/service",
-        [string]$swagOut = "./internal/auth-service/v1/service/docs"
+        [string]$swagOut = "./internal/auth-service/v1/docs"
     )
 
     $dirArray = $dirs -split ','
@@ -14,7 +14,7 @@ function Set-ApiAuthMultDir {
 }
 
 function Set-AuthCodeGen {
-    &oapi-codegen.exe -config ./pkg/api/generated/auth-service/config.yaml ./internal/auth-service/v1/service/docs/swagger.yaml
+    &oapi-codegen.exe -config ./pkg/api/generated/auth-service/config.yaml ./internal/auth-service/v1/docs/swagger.yaml
 }
 
 
