@@ -1,0 +1,17 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Authentication service for payloads",
+        "title": "IDP Auth-Service",
+        "contact": {
+            "name": "platform-team",
+            "email": "platform-team@myorg.io"
+        },
+        "license": {
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/auth",
+    "paths": {}
+}

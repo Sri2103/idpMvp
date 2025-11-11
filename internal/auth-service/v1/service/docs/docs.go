@@ -10,7 +10,7 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "plateform-team",
+            "name": "platform-team",
             "email": "platform-team@myorg.io"
         },
         "license": {
@@ -20,38 +20,17 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {
-        "/healthz": {
-            "get": {
-                "summary": "health of the server handler",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/ready": {
-            "get": {
-                "summary": "readyness of the server",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        }
-    }
+    "paths": {}
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/api/v1",
+	BasePath:         "/auth",
 	Schemes:          []string{},
-	Title:            "IDP API Gateway",
-	Description:      "Entry point for all the clients and cli",
+	Title:            "IDP Auth-Service",
+	Description:      "Authentication service for payloads",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

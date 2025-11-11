@@ -23,6 +23,16 @@
                     }
                 }
             }
+        },
+        "/ready": {
+            "get": {
+                "summary": "readyness of the server",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     }
 }

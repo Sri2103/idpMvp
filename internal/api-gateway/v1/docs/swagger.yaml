@@ -15,4 +15,10 @@ paths:
         "200":
           description: OK
       summary: health of the server handler
+  /ready:
+    get:
+      responses:
+        "200":
+          description: OK
+      summary: readyness of the server
 swagger: "2.0"
