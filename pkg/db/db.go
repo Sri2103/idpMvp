@@ -1,0 +1,25 @@
+// pkg/db/db.go
+package db
+
+import (
+	"database/sql"
+	"log"
+
+	_ "github.com/lib/pq"
+)
+
+var DB *sql.DB
+
+func Connect(connStr string) {
+	var err error
+	DB, err = sql.Open("postgres", connStr)
+	if err != nil {
+		log.Fatalf("Database connection failed: %v", err)
+	}
+
+	if err := DB.Ping(); err != nil {
+		log.Fatalf("Database ping failed: %v", err)
+	}
+
+	log.Println("Database connected")
+}

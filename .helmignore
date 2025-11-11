@@ -1,0 +1,40 @@
+# Common VCS directories
+.git/
+.hg/
+.svn/
+CVS/
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary and build files
+*.swp
+*.bak
+*.tmp
+*.orig
+*.rej
+*.tar.gz
+*.tgz
+
+# Chart dependencies and lock files
+charts/
+requirements.lock
+helmfile.lock
+
+# Documentation and non-deploy assets
+README*
+LICENSE*
+*.md
+examples/
+testdata/
+scripts/
+
+# Local values overrides
+values.local.yaml
+values.dev.yaml
+values-secret.yaml
+.env
+.env.*

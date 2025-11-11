@@ -1,0 +1,96 @@
+# ───────────────────────────────
+# OS, Editor, and Git files
+# ───────────────────────────────
+.git
+.gitignore
+.gitattributes
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# ───────────────────────────────
+# Dependencies and Build Artifacts
+# ───────────────────────────────
+node_modules
+vendor
+dist
+build
+tmp
+bin
+coverage
+testdata
+mocks
+reports
+*.out
+*.log
+*.tmp
+*.swp
+*.bak
+
+# ───────────────────────────────
+# Go specific
+# ───────────────────────────────
+*.exe
+*.test
+*.prof
+*.mod
+*.sum
+debug
+*.a
+
+# ───────────────────────────────
+# Node/Frontend specific
+# ───────────────────────────────
+.next
+.nuxt
+.cache
+.vite
+.turbo
+.parcel-cache
+.eslintcache
+*.tgz
+*.map
+
+# ───────────────────────────────
+# Environment and Secrets
+# ───────────────────────────────
+.env
+.env.*
+.envrc
+*.pem
+*.key
+*.crt
+*.cert
+*.enc
+*.kubeconfig
+**/secrets.yaml
+**/values-secret.yaml
+
+# ───────────────────────────────
+# Helm and Manifests
+# ───────────────────────────────
+charts
+manifests
+*.tgz
+*.tar
+*.zip
+
+# ───────────────────────────────
+# CLI and Script Artifacts
+# ───────────────────────────────
+cli/output
+cli/tmp
+cli/bin
+
+# ───────────────────────────────
+# Misc
+# ───────────────────────────────
+*.bak
+*.tmp
+*.swp
+*.swo
+*.orig
+*.rej
+*.pid
+*.seed
