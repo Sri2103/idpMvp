@@ -15,8 +15,23 @@ function Set-ApiAuthMultDir {
 
 function Set-AuthCodeGen {
     &oapi-codegen.exe -config ./pkg/api/generated/auth-service/config.yaml ./internal/auth-service/v1/docs/swagger.yaml
+    
 }
 
 
-Set-ApiAuthMultDir
-Set-AuthCodeGen
+function Get-AuthCodegen {
+    &generate client -c apiAuth -f ./internal/auth-service/v1/docs/swagger.yaml -t ./pkg/api/generated/auth-service/client
+}
+
+function Set-Cli {
+    &swagger generate cli -A auth-service  -f ./internal/auth-service/v1/docs/swagger.yaml -t ./pkg/api/generated/auth-service
+}
+
+
+
+function Set-Code {
+    Set-ApiAuthMultDir
+    Set-Cli
+}
+
+Set-Code

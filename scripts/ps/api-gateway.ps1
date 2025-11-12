@@ -5,34 +5,6 @@ param (
 )
 
 
-function Invoke-Swagger {
-
-
-    # & docker run --rm -v $(Get-Location):/code ghcr.io/swaggo/swag:latest 
-
-    $fullPath = Join-Path $(Get-Location) -ChildPath $Path
-    Write-Host $fullPath
-    
-}
-
-
-# function Set-ApiGatewaySwag {
-#     param (
-#         [string]$main = "main.go",
-#         [string]$basePath = "./cmd/api-gateway/",
-#         [string]$swagOut = "./internal/api-gateway/v1/docs/",
-#         [string]$swagdir = "./internal/api-gateway/v1/handlers/",
-#         [string]$genconfig = "./pkg/api/generated/api-gateway/config.yaml",
-#         [string]$apiConfig = "./internal/api-gateway/v1/docs/swagger.yaml"
-#     )
-
-#     $list = @{
-#         $basePath, $swagdir
-#     }
-
-#     & swag.exe i -g $main -d "./cmd/api-gateway", $swagdir -o $swagOut
-#     & oapi-codegen.exe -config $genconfig $apiConfig
-# }
 
 function Set-ApiGatewaySwagMultiDir {
     param (
@@ -55,19 +27,33 @@ function Set-ApiGatewayCodeGen {
 }
 
 
-function set-Swag {
+
+
+
+function Set-GoSwagClient {
+    &swagger generate client -c apiGateway -f ./internal/api-gateway/v1/docs/swagger.yaml -t ./pkg/api/generated/api-gateway/client
+}
+
+
+# function Set-GoSwagCLI {
+#     &swagger generate cli -c apiGateway  --cli-app-name apiGatewayCli  -f ./internal/api-gateway/v1/docs/swagger.yaml -t ./pkg/api/generated/api-gateway/client
+
+# }
+function Set-GoSwagCLI {
+    &swagger generate cli -A apiGateway  -f ./internal/api-gateway/v1/docs/swagger.yaml -t ./pkg/api/generated/api-gateway
+
+}
+
+function Set-GetSwagServer {
+    &swagger generate server -s server -f ./internal/api-gateway/v1/docs/swagger.yaml -t ./pkg/api/generated/api-gateway/server
+}
+
+function Set-Swag {
     Set-ApiGatewaySwagMultiDir
-    Set-ApiGatewayCodeGen
+    Set-GoSwagCLI
 }
 
-
-
-
-function Set-GoSwag {
-    &swagger generate spec -w ./cmd/api-gateway -o ./internal/api-gateway/swagger.yaml
-}
-
-Set-GoSwag
+Set-Swag
 
 
 

@@ -9,9 +9,7 @@ import (
 
 	"idp_mvp/internal/auth-service/v1/repository"
 	"idp_mvp/internal/auth-service/v1/service"
-	apiAuth "idp_mvp/pkg/api/generated/auth-service"
 	"idp_mvp/pkg/logger"
-	"idp_mvp/pkg/middleware"
 
 	_ "idp_mvp/internal/auth-service/v1/docs"
 
@@ -36,7 +34,7 @@ func main() {
 	defer SugaredLogger.Sync()
 	sigCh := make(chan os.Signal, 2)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-	SugaredLogger.Infof("starting the server on %d", 4000)
+	SugaredLogger.Infof("starting the server on %d", 4001)
 
 	go func() {
 		if err := CreateHttpServer(); err != nil && err != http.ErrServerClosed {
@@ -50,7 +48,7 @@ func main() {
 
 func CreateHttpServer() error {
 	svc := service.NewUserService(repository.NewInMemoryReps())
-	handler := service.New(SugaredLogger, svc)
+	_ = service.New(SugaredLogger, svc)
 
 	muxRouter := mux.NewRouter().StrictSlash(true)
 
@@ -63,21 +61,9 @@ func CreateHttpServer() error {
 		httpSwagger.URL("http://localhost:4000/swagger/doc.json"),
 	)).Methods("GET", "OPTIONS", "POST", "PUT")
 
-	serverOptions := apiAuth.GorillaServerOptions{
-		BaseURL: "",
-		Middlewares: []apiAuth.MiddlewareFunc{
-			middleware.Logging,
-			middleware.RecoveryMiddleware,
-			middleware.CORSMiddleware,
-		},
-		BaseRouter: muxRouter,
-	}
-
-	r := apiAuth.HandlerWithOptions(handler, serverOptions)
-
 	server := http.Server{
-		Handler:      r,
-		Addr:         ":4000",
+		Handler:      muxRouter,
+		Addr:         ":4001",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
