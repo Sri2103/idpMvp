@@ -1,4 +1,4 @@
-package service
+package models
 
 import (
 	"time"
@@ -12,6 +12,7 @@ type User struct {
 	Email        string
 	PasswordHash string
 	IsAdmin      bool
+	Roles        []string
 	IsActive     bool
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
