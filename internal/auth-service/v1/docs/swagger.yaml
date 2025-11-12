@@ -1,4 +1,35 @@
 basePath: /
+definitions:
+  service.registerRequest:
+    properties:
+      email:
+        type: string
+      is_admin:
+        type: boolean
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      tenant_id:
+        type: string
+      username:
+        type: string
+    type: object
+  service.registerResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      tenant_id:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact:
     email: platform-team@myorg.io
@@ -166,18 +197,14 @@ paths:
         name: request
         required: true
         schema:
-          additionalProperties:
-            type: string
-          type: object
+          $ref: '#/definitions/service.registerRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/service.registerResponse'
         "400":
           description: Bad Request
           schema:

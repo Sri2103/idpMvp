@@ -3,18 +3,38 @@ package service
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"go.uber.org/zap"
 )
 
 type handlers struct {
 	logger *zap.SugaredLogger
+	svc    *UserService
 }
 
-func New(logger *zap.SugaredLogger) *handlers {
+func New(logger *zap.SugaredLogger, svc *UserService) *handlers {
 	return &handlers{
 		logger: logger,
+		svc:    svc,
 	}
+}
+
+type registerRequest struct {
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	TenantId string   `json:"tenant_id"`
+	Roles    []string `json:"roles"`
+	IsAdmin  bool     `json:"is_admin"`
+}
+
+type registerResponse struct {
+	ID        string    `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	TenantID  string    `json:"tenant_id"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // @Summary Register a new user
@@ -22,12 +42,33 @@ func New(logger *zap.SugaredLogger) *handlers {
 // @Tags Auth
 // @Accent json
 // @Produce json
-// @Param request body map[string]string true "User credentials"
-// @Success 201 {object} map[string]string
+// @Param request body registerRequest true "User credentials"
+// @Success 201 {object} registerResponse
 // @Failure 400 {object} map[string]string
 // @Router /auth/register [post]
-func (handlers) PostAuthRegister(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(map[string]string{"message": "Register endpoint"})
+func (h *handlers) PostAuthRegister(w http.ResponseWriter, r *http.Request) {
+	var req registerRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
+
+	u, err := h.svc.Register(req.Username, req.Email, req.Password, req.TenantId, req.Roles, req.IsAdmin)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(registerResponse{
+		ID:        u.ID,
+		Username:  u.Username,
+		Email:     u.Email,
+		TenantID:  u.TenantID,
+		CreatedAt: u.CreatedAt,
+	})
 }
 
 // @Summary Login user

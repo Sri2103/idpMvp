@@ -55,8 +55,20 @@ function Set-ApiGatewayCodeGen {
 }
 
 
-Set-ApiGatewaySwagMultiDir
-Set-ApiGatewayCodeGen
+function set-Swag {
+    Set-ApiGatewaySwagMultiDir
+    Set-ApiGatewayCodeGen
+}
+
+
+
+
+function Set-GoSwag {
+    &swagger generate spec -w ./cmd/api-gateway -o ./internal/api-gateway/swagger.yaml
+}
+
+Set-GoSwag
+
 
 
 

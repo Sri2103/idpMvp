@@ -7,6 +7,7 @@ import (
 	"syscall"
 	"time"
 
+	"idp_mvp/internal/auth-service/v1/repository"
 	"idp_mvp/internal/auth-service/v1/service"
 	apiAuth "idp_mvp/pkg/api/generated/auth-service"
 	"idp_mvp/pkg/logger"
@@ -48,7 +49,8 @@ func main() {
 }
 
 func CreateHttpServer() error {
-	handler := service.New(SugaredLogger)
+	svc := service.NewUserService(repository.NewInMemoryReps())
+	handler := service.New(SugaredLogger, svc)
 
 	muxRouter := mux.NewRouter().StrictSlash(true)
 
