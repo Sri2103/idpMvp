@@ -5,6 +5,7 @@ info:
     name: plateform-team
   description: Entry point for all the clients and cli
   license:
+    name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: IDP API Gateway
   version: "1.0"

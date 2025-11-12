@@ -6,11 +6,16 @@ package apiAuth
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/gorilla/mux"
+)
+
+const (
+	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -86,6 +91,383 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// PostAuthChangePassword request
+	PostAuthChangePassword(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostAuthForgotPassword request
+	PostAuthForgotPassword(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostAuthLogin request
+	PostAuthLogin(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostAuthLogout request
+	PostAuthLogout(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAuthMe request
+	GetAuthMe(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostAuthRefresh request
+	PostAuthRefresh(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostAuthRegister request
+	PostAuthRegister(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostAuthResetPassword request
+	PostAuthResetPassword(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetHealthz request
+	GetHealthz(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) PostAuthChangePassword(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthChangePasswordRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostAuthForgotPassword(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthForgotPasswordRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostAuthLogin(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthLoginRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostAuthLogout(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthLogoutRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAuthMe(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAuthMeRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostAuthRefresh(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthRefreshRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostAuthRegister(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthRegisterRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostAuthResetPassword(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthResetPasswordRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetHealthz(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHealthzRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// NewPostAuthChangePasswordRequest generates requests for PostAuthChangePassword
+func NewPostAuthChangePasswordRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/change-password")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostAuthForgotPasswordRequest generates requests for PostAuthForgotPassword
+func NewPostAuthForgotPasswordRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/forgot-password")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostAuthLoginRequest generates requests for PostAuthLogin
+func NewPostAuthLoginRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/login")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostAuthLogoutRequest generates requests for PostAuthLogout
+func NewPostAuthLogoutRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/logout")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAuthMeRequest generates requests for GetAuthMe
+func NewGetAuthMeRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/me")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostAuthRefreshRequest generates requests for PostAuthRefresh
+func NewPostAuthRefreshRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/refresh")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostAuthRegisterRequest generates requests for PostAuthRegister
+func NewPostAuthRegisterRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/register")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostAuthResetPasswordRequest generates requests for PostAuthResetPassword
+func NewPostAuthResetPasswordRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/reset-password")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetHealthzRequest generates requests for GetHealthz
+func NewGetHealthzRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/healthz")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
@@ -131,10 +513,477 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// PostAuthChangePasswordWithResponse request
+	PostAuthChangePasswordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthChangePasswordResponse, error)
+
+	// PostAuthForgotPasswordWithResponse request
+	PostAuthForgotPasswordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthForgotPasswordResponse, error)
+
+	// PostAuthLoginWithResponse request
+	PostAuthLoginWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthLoginResponse, error)
+
+	// PostAuthLogoutWithResponse request
+	PostAuthLogoutWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthLogoutResponse, error)
+
+	// GetAuthMeWithResponse request
+	GetAuthMeWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAuthMeResponse, error)
+
+	// PostAuthRefreshWithResponse request
+	PostAuthRefreshWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthRefreshResponse, error)
+
+	// PostAuthRegisterWithResponse request
+	PostAuthRegisterWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthRegisterResponse, error)
+
+	// PostAuthResetPasswordWithResponse request
+	PostAuthResetPasswordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthResetPasswordResponse, error)
+
+	// GetHealthzWithResponse request
+	GetHealthzWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetHealthzResponse, error)
+}
+
+type PostAuthChangePasswordResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthChangePasswordResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthChangePasswordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostAuthForgotPasswordResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthForgotPasswordResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthForgotPasswordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostAuthLoginResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthLoginResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthLoginResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostAuthLogoutResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthLogoutResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthLogoutResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetAuthMeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAuthMeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAuthMeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostAuthRefreshResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthRefreshResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthRefreshResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostAuthRegisterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthRegisterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthRegisterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostAuthResetPasswordResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthResetPasswordResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthResetPasswordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetHealthzResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHealthzResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHealthzResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// PostAuthChangePasswordWithResponse request returning *PostAuthChangePasswordResponse
+func (c *ClientWithResponses) PostAuthChangePasswordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthChangePasswordResponse, error) {
+	rsp, err := c.PostAuthChangePassword(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthChangePasswordResponse(rsp)
+}
+
+// PostAuthForgotPasswordWithResponse request returning *PostAuthForgotPasswordResponse
+func (c *ClientWithResponses) PostAuthForgotPasswordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthForgotPasswordResponse, error) {
+	rsp, err := c.PostAuthForgotPassword(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthForgotPasswordResponse(rsp)
+}
+
+// PostAuthLoginWithResponse request returning *PostAuthLoginResponse
+func (c *ClientWithResponses) PostAuthLoginWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthLoginResponse, error) {
+	rsp, err := c.PostAuthLogin(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthLoginResponse(rsp)
+}
+
+// PostAuthLogoutWithResponse request returning *PostAuthLogoutResponse
+func (c *ClientWithResponses) PostAuthLogoutWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthLogoutResponse, error) {
+	rsp, err := c.PostAuthLogout(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthLogoutResponse(rsp)
+}
+
+// GetAuthMeWithResponse request returning *GetAuthMeResponse
+func (c *ClientWithResponses) GetAuthMeWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAuthMeResponse, error) {
+	rsp, err := c.GetAuthMe(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAuthMeResponse(rsp)
+}
+
+// PostAuthRefreshWithResponse request returning *PostAuthRefreshResponse
+func (c *ClientWithResponses) PostAuthRefreshWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthRefreshResponse, error) {
+	rsp, err := c.PostAuthRefresh(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthRefreshResponse(rsp)
+}
+
+// PostAuthRegisterWithResponse request returning *PostAuthRegisterResponse
+func (c *ClientWithResponses) PostAuthRegisterWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthRegisterResponse, error) {
+	rsp, err := c.PostAuthRegister(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthRegisterResponse(rsp)
+}
+
+// PostAuthResetPasswordWithResponse request returning *PostAuthResetPasswordResponse
+func (c *ClientWithResponses) PostAuthResetPasswordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthResetPasswordResponse, error) {
+	rsp, err := c.PostAuthResetPassword(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthResetPasswordResponse(rsp)
+}
+
+// GetHealthzWithResponse request returning *GetHealthzResponse
+func (c *ClientWithResponses) GetHealthzWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetHealthzResponse, error) {
+	rsp, err := c.GetHealthz(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHealthzResponse(rsp)
+}
+
+// ParsePostAuthChangePasswordResponse parses an HTTP response from a PostAuthChangePasswordWithResponse call
+func ParsePostAuthChangePasswordResponse(rsp *http.Response) (*PostAuthChangePasswordResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthChangePasswordResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParsePostAuthForgotPasswordResponse parses an HTTP response from a PostAuthForgotPasswordWithResponse call
+func ParsePostAuthForgotPasswordResponse(rsp *http.Response) (*PostAuthForgotPasswordResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthForgotPasswordResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParsePostAuthLoginResponse parses an HTTP response from a PostAuthLoginWithResponse call
+func ParsePostAuthLoginResponse(rsp *http.Response) (*PostAuthLoginResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthLoginResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParsePostAuthLogoutResponse parses an HTTP response from a PostAuthLogoutWithResponse call
+func ParsePostAuthLogoutResponse(rsp *http.Response) (*PostAuthLogoutResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthLogoutResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetAuthMeResponse parses an HTTP response from a GetAuthMeWithResponse call
+func ParseGetAuthMeResponse(rsp *http.Response) (*GetAuthMeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAuthMeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParsePostAuthRefreshResponse parses an HTTP response from a PostAuthRefreshWithResponse call
+func ParsePostAuthRefreshResponse(rsp *http.Response) (*PostAuthRefreshResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthRefreshResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParsePostAuthRegisterResponse parses an HTTP response from a PostAuthRegisterWithResponse call
+func ParsePostAuthRegisterResponse(rsp *http.Response) (*PostAuthRegisterResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthRegisterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParsePostAuthResetPasswordResponse parses an HTTP response from a PostAuthResetPasswordWithResponse call
+func ParsePostAuthResetPasswordResponse(rsp *http.Response) (*PostAuthResetPasswordResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthResetPasswordResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetHealthzResponse parses an HTTP response from a GetHealthzWithResponse call
+func ParseGetHealthzResponse(rsp *http.Response) (*GetHealthzResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHealthzResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
 }
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Change password
+	// (POST /auth/change-password)
+	PostAuthChangePassword(w http.ResponseWriter, r *http.Request)
+	// Forgot password
+	// (POST /auth/forgot-password)
+	PostAuthForgotPassword(w http.ResponseWriter, r *http.Request)
+	// Login user
+	// (POST /auth/login)
+	PostAuthLogin(w http.ResponseWriter, r *http.Request)
+	// Logout user
+	// (POST /auth/logout)
+	PostAuthLogout(w http.ResponseWriter, r *http.Request)
+	// Get current user profile
+	// (GET /auth/me)
+	GetAuthMe(w http.ResponseWriter, r *http.Request)
+	// Refresh access token
+	// (POST /auth/refresh)
+	PostAuthRefresh(w http.ResponseWriter, r *http.Request)
+	// Register a new user
+	// (POST /auth/register)
+	PostAuthRegister(w http.ResponseWriter, r *http.Request)
+	// Reset password
+	// (POST /auth/reset-password)
+	PostAuthResetPassword(w http.ResponseWriter, r *http.Request)
+	// Health Check
+	// (GET /healthz)
+	GetHealthz(w http.ResponseWriter, r *http.Request)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -145,6 +994,150 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// PostAuthChangePassword operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthChangePassword(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthChangePassword(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostAuthForgotPassword operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthForgotPassword(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthForgotPassword(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostAuthLogin operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthLogin(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthLogin(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostAuthLogout operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthLogout(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthLogout(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetAuthMe operation middleware
+func (siw *ServerInterfaceWrapper) GetAuthMe(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAuthMe(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostAuthRefresh operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthRefresh(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthRefresh(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostAuthRegister operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthRegister(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthRegister(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostAuthResetPassword operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthResetPassword(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthResetPassword(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetHealthz operation middleware
+func (siw *ServerInterfaceWrapper) GetHealthz(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetHealthz(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
 
 type UnescapedCookieParamError struct {
 	ParamName string
@@ -253,6 +1246,29 @@ func HandlerWithOptions(si ServerInterface, options GorillaServerOptions) http.H
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 	}
+	wrapper := ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.Middlewares,
+		ErrorHandlerFunc:   options.ErrorHandlerFunc,
+	}
+
+	r.HandleFunc(options.BaseURL+"/auth/change-password", wrapper.PostAuthChangePassword).Methods("POST")
+
+	r.HandleFunc(options.BaseURL+"/auth/forgot-password", wrapper.PostAuthForgotPassword).Methods("POST")
+
+	r.HandleFunc(options.BaseURL+"/auth/login", wrapper.PostAuthLogin).Methods("POST")
+
+	r.HandleFunc(options.BaseURL+"/auth/logout", wrapper.PostAuthLogout).Methods("POST")
+
+	r.HandleFunc(options.BaseURL+"/auth/me", wrapper.GetAuthMe).Methods("GET")
+
+	r.HandleFunc(options.BaseURL+"/auth/refresh", wrapper.PostAuthRefresh).Methods("POST")
+
+	r.HandleFunc(options.BaseURL+"/auth/register", wrapper.PostAuthRegister).Methods("POST")
+
+	r.HandleFunc(options.BaseURL+"/auth/reset-password", wrapper.PostAuthResetPassword).Methods("POST")
+
+	r.HandleFunc(options.BaseURL+"/healthz", wrapper.GetHealthz).Methods("GET")
 
 	return r
 }

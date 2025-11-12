@@ -27,7 +27,8 @@ var SugaredLogger *zap.SugaredLogger
 // @BasePath /api/v1
 // @contact.name plateform-team
 // @contact.email platform-team@myorg.io
-// @license name Apache 2.0
+
+// @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	// cfg := config.Load("api-gateway")
